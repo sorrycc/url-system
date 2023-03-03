@@ -16,11 +16,12 @@ async function main() {
   assert(url, 'url is not set');
   let summary = cache.get(url);
   if (!summary) {
-    const content = (await urlToContent(url as string))?.textContent;
+    const { content, prompt } = (await urlToContent(url as string));
     assert(content, 'content is not set');
     console.log('> got content');
     summary = await contentToSummary({
       content,
+      prompt,
     });
     console.log('> got summary');
     cache.set(url, summary);
