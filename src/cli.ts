@@ -25,7 +25,9 @@ async function main() {
       prompt,
     });
     console.log('> got summary');
-    cache.set(url, summary);
+    if (!args.test) {
+      cache.set(url, summary);
+    }
   } else {
     console.log('> it\'s cached');
   }
