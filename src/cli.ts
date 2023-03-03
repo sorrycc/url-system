@@ -2,6 +2,7 @@ import yParser from 'yargs-parser';
 import { urlToContent } from './urlToContent/urlToContent';
 import assert from 'assert';
 import path from 'path';
+// @ts-ignore
 import pangu from 'pangu';
 import { Cache } from './cache';
 import { contentToSummary } from './contentToSummary';
@@ -15,7 +16,7 @@ async function main() {
   const url = args._[0] as string;
   assert(url, 'url is not set');
   let summary = cache.get(url);
-  if (!summary) {
+  if (args.force || !summary) {
     const { content, prompt } = (await urlToContent(url as string));
     assert(content, 'content is not set');
     console.log('> got content');

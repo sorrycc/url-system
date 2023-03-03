@@ -1,23 +1,32 @@
 import assert from 'assert';
 import axios from 'axios';
+import { getEnv } from '../env';
 
 const re = /^https:\/\/www\.bilibili\.com\/video\/(.+?)(\/|$)/;
 
+// ref:
+// https://github.com/JimmyLv/BiliGPT/blob/823e01d/utils/3rd/bilibili.ts
 export async function bilibili(url: string) {
   const match = url.match(re);
   assert(match, `url ${url} does not match ${re}`);
   const bvid = match[1];
   const infoUrl = `https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`;
-  const { data: infoData } = await axios.get(infoUrl);
+  const env = getEnv();
+  assert(env.BILIBILI_SESSION_DATA, 'BILIBILI_SESSION_DATA is not set');
+  const { data: infoData } = await axios.get(infoUrl, {
+    headers: {
+      Cookie: `SESSDATA=${env.BILIBILI_SESSION_DATA}`,
+    },
+  });
   const list = infoData.data.subtitle.list;
-  assert(list.length, `subtitle not found`);
+  assert(list.length, `subtitle not found for ${infoUrl}`);
   const { data: subtitleData } = await axios.get(list[0].subtitle_url);
   const content = subtitleData.body.map((item: any) => {
     return `${item.from}: ${item.content}`;
   });
   return {
     content: content.join('\n'),
-    prompt: `我希望你是一名专业的视频内容编辑，帮我总结视频的内容精华。请你将视频字幕文本进行总结，然后以无序列表的方式返回，不要超过5条。记得不要重复句子，确保所有的句子都足够精简，清晰完整，祝你好运！`,
+    prompt: `Please summarize this article in chinese, then list less then 5 takeaways in chinese.`,
   };
 }
 

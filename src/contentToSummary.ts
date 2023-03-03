@@ -1,13 +1,10 @@
 import { encoding_for_model } from '@dqbd/tiktoken';
 import assert from "assert";
-import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
 import axios from 'axios';
+import { getEnv } from './env';
 
 const CHATGPT_MODEL = 'gpt-3.5-turbo';
 const PROMPT = `Please summarize this article in chinese.`;
-const env = dotenv.parse(fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8'));
 
 const maxModelTokens = 4096;
 const maxResponseTokens = 500;
@@ -60,6 +57,7 @@ export async function contentToSummary(opts: {
   content: string,
   prompt?: string,
 }) {
+  const env = getEnv();
   assert(env.OPENAI_API_KEY, "OPENAI_API_KEY is not set");
   const api = new ChatGPTAPI({
     apiKey: env.OPENAI_API_KEY,
