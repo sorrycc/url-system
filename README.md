@@ -10,4 +10,4 @@ Rename `.env.example` to `.env` and add `OPENAI_API_KEY`
 
 **Step 3**
 
-Use the command `bunx enso src/cli.ts https://path/to/url`
+Use the command `bunx tsx src/cli.ts https://path/to/url`
