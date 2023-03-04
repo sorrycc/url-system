@@ -19,12 +19,14 @@ export async function bilibili(url: string) {
     },
   });
   const list = infoData.data.subtitle.list;
+  const title = infoData.data.title;
   assert(list.length, `subtitle not found for ${infoUrl}`);
   const { data: subtitleData } = await axios.get(list[0].subtitle_url);
   const content = subtitleData.body.map((item: any) => {
     return `${item.from}: ${item.content}`;
   });
   return {
+    title,
     content: content.join('\n'),
     prompt: `Please summarize this article in chinese, then list less then 5 takeaways in chinese.`,
   };

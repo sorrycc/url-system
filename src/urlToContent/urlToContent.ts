@@ -32,9 +32,10 @@ export async function urlToContent(url: string) {
   const reader = new Readability(root, {
     debug: !!process.env.DEBUG,
   });
-  const { textContent } = reader.parse()!;
+  const parseResult = reader.parse()!;
   return {
-    content: textContent,
+    title: parseResult.title,
+    content: parseResult.textContent,
     prompt: `Please summarize this article in chinese.`,
   };
 }

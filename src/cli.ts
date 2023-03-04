@@ -15,23 +15,29 @@ async function main() {
   console.log('> args', JSON.stringify(args));
   const url = args._[0] as string;
   assert(url, 'url is not set');
-  let summary = cache.get(url);
-  if (args.force || !summary) {
-    const { content, prompt } = (await urlToContent(url as string));
+  let result = cache.get(url);
+  if (args.force || !result) {
+    const { content, prompt, title } = (await urlToContent(url as string));
     assert(content, 'content is not set');
     console.log('> got content');
-    summary = await contentToSummary({
+    const summary_raw = await contentToSummary({
       content,
       prompt,
     });
+    const summary = pangu.spacing(summary_raw.choices[0].message.content).trim();
     console.log('> got summary');
     if (!args.test) {
-      cache.set(url, summary);
+      cache.set(url, {
+        title,
+        content,
+        summary,
+        summary_raw,
+      });
     }
   } else {
     console.log('> it\'s cached');
   }
-  console.log(pangu.spacing(summary.choices[0].message.content));
+  console.log(result.summary);
 }
 
 main().catch(e => {
