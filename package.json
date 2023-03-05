@@ -21,7 +21,7 @@
     "dev": "father dev",
     "build": "father build",
     "doctor": "father doctor",
-    "release": "father doctor && esno scripts/release.ts"
+    "release": "esno scripts/release.ts"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^0.4.0",
