@@ -3,5 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 export function getEnv() {
-  return dotenv.parse(fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8'));
+  const envPath = path.join(__dirname, '../.env');
+  return fs.existsSync(envPath)
+    ? dotenv.parse(fs.readFileSync(envPath, 'utf-8'))
+    : process.env;
 }

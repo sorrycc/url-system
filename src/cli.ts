@@ -27,13 +27,14 @@ async function main() {
     const summary = pangu.spacing(summary_raw.choices[0].message.content).trim();
     console.log('> got summary');
     if (!args.test) {
-      cache.set(url, {
+      result = {
         title,
         content,
         summary,
         summary_raw,
         created_at: new Date().getTime(),
-      });
+      };
+      cache.set(url, result);
     }
   } else {
     console.log('> it\'s cached');
