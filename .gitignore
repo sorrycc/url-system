@@ -2,3 +2,4 @@
 /.env
 /data/*.json
 /test.ts
+/dist
