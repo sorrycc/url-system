@@ -26,13 +26,13 @@ dependencies:
   '@types/yargs-parser': 21.0.0
   axios: 1.3.4
   dayjs: 1.11.7
+  dotenv: 16.0.3
   jsdom: 21.1.0
   pangu: 4.0.7
   yargs-parser: 21.1.1
 
 devDependencies:
   '@types/node': 18.14.4
-  dotenv: 16.0.3
   father: 4.1.6_@types+node@18.14.4
   git-repo-info: 2.1.1
   prettier: 2.8.4
@@ -1905,7 +1905,7 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: true
+    dev: false
 
   /duplexer/0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
