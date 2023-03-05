@@ -32,6 +32,7 @@ async function main() {
         content,
         summary,
         summary_raw,
+        created_at: new Date().getTime(),
       });
     }
   } else {
