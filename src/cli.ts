@@ -6,6 +6,8 @@ import path from 'path';
 import pangu from 'pangu';
 import { Cache } from './cache';
 import { contentToSummary } from './contentToSummary';
+import { getEnv } from './env';
+import axios from 'axios';
 
 async function main() {
   const cache = new Cache({
@@ -17,14 +19,16 @@ async function main() {
   assert(url, 'url is not set');
   let result = cache.get(url);
   if (args.force || !result) {
-    const { content, prompt, title } = (await urlToContent(url as string));
+    const { content, prompt, title } = await urlToContent(url as string);
     assert(content, 'content is not set');
     console.log('> got content');
     const summary_raw = await contentToSummary({
       content,
       prompt,
     });
-    const summary = pangu.spacing(summary_raw.choices[0].message.content).trim();
+    const summary = pangu
+      .spacing(summary_raw.choices[0].message.content)
+      .trim();
     console.log('> got summary');
     if (!args.test) {
       result = {
@@ -34,16 +38,24 @@ async function main() {
         summary_raw,
         created_at: new Date().getTime(),
       };
+      if (getEnv().OPENAI_API_SERVER) {
+        const {
+          data: { text },
+        } = await axios.post(getEnv().OPENAI_API_SERVER!, {
+          message: `${title}`,
+          prompt: 'Please translate the following text into Chinese:',
+        });
+        result.translatedTitle = pangu.spacing(text.trim());
+      }
       cache.set(url, result);
     }
   } else {
-    console.log('> it\'s cached');
+    console.log(`> it's cached`);
   }
   console.log(result.summary);
 }
 
-main().catch(e => {
+main().catch((e) => {
   console.error(e);
   process.exit(1);
 });
-
