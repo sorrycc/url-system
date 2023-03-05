@@ -1,10 +1,12 @@
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 
 export class Cache {
   cache: Map<string, any> = new Map();
   filePath: string;
 
   constructor(opts: { filePath: string }) {
+    mkdirp.sync(path.dirname(opts.filePath));
     this.filePath = opts.filePath;
     const content = fs.existsSync(opts.filePath)
       ? fs.readFileSync(opts.filePath, 'utf-8')

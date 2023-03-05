@@ -4,6 +4,7 @@ specifiers:
   '@dqbd/tiktoken': ^0.4.0
   '@mozilla/readability': ^0.4.2
   '@types/jsdom': ^21.1.0
+  '@types/mkdirp': ^2.0.0
   '@types/node': ^18.14.4
   '@types/yargs-parser': ^21.0.0
   axios: ^1.3.4
@@ -13,6 +14,7 @@ specifiers:
   father: ^4.1.6
   git-repo-info: ^2.1.1
   jsdom: ^21.1.0
+  mkdirp: ^2.1.5
   pangu: ^4.0.7
   prettier: ^2.6.2
   prettier-plugin-organize-imports: ^2.3.4
@@ -24,11 +26,13 @@ dependencies:
   '@dqbd/tiktoken': 0.4.0
   '@mozilla/readability': 0.4.2
   '@types/jsdom': 21.1.0
+  '@types/mkdirp': 2.0.0
   '@types/yargs-parser': 21.0.0
   axios: 1.3.4
   dayjs: 1.11.7
   dotenv: 16.0.3
   jsdom: 21.1.0
+  mkdirp: 2.1.5
   pangu: 4.0.7
   yargs-parser: 21.1.1
 
@@ -1206,6 +1210,13 @@ packages:
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
     dev: true
+
+  /@types/mkdirp/2.0.0:
+    resolution: {integrity: sha512-c/iUqMymAlxLAyIK3u5SzrwkrkyOdv1XDc91T+b5FsY7Jr6ERhUD19jJHOhPW4GD6tmN6mFEorfSdks525pwdQ==}
+    deprecated: This is a stub types definition. mkdirp provides its own type definitions, so you do not need this installed.
+    dependencies:
+      mkdirp: 2.1.5
+    dev: false
 
   /@types/node-fetch/2.6.2:
     resolution: {integrity: sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==}
@@ -3504,6 +3515,12 @@ packages:
   /minimist/1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
     dev: true
+
+  /mkdirp/2.1.5:
+    resolution: {integrity: sha512-jbjfql+shJtAPrFoKxHOXip4xS+kul9W3OzfzzrqueWK2QMGon2bFH2opl6W9EagBThjEz+iysyi/swOoVfB/w==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dev: false
 
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
