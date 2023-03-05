@@ -9,7 +9,7 @@ import getGitRepoInfo from 'git-repo-info';
   await $`npm publish`;
 
   // commit and tag and push
-  await $`git commit -am "release: ${newVersion}"`;
+  // await $`git commit -am "release: ${newVersion}"`;
   await $`git tag v${newVersion}`;
   await $`git push origin ${branch} --tags`;
 })().catch((e) => {
