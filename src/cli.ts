@@ -30,29 +30,30 @@ async function main() {
       .spacing(summary_raw.choices[0].message.content)
       .trim();
     console.log('> got summary');
+    result = {
+      title,
+      content,
+      summary,
+      summary_raw,
+      created_at: new Date().getTime(),
+    };
+    if (getEnv().OPENAI_API_SERVER) {
+      const {
+        data: { text },
+      } = await axios.post(getEnv().OPENAI_API_SERVER!, {
+        message: `${title}`,
+        prompt: 'Please translate the following text into Chinese:',
+      });
+      result.translatedTitle = pangu.spacing(text.trim());
+    }
     if (!args.test) {
-      result = {
-        title,
-        content,
-        summary,
-        summary_raw,
-        created_at: new Date().getTime(),
-      };
-      if (getEnv().OPENAI_API_SERVER) {
-        const {
-          data: { text },
-        } = await axios.post(getEnv().OPENAI_API_SERVER!, {
-          message: `${title}`,
-          prompt: 'Please translate the following text into Chinese:',
-        });
-        result.translatedTitle = pangu.spacing(text.trim());
-      }
       cache.set(url, result);
     }
+    console.log(result.summary);
   } else {
     console.log(`> it's cached`);
+    console.log(result.summary);
   }
-  console.log(result.summary);
 }
 
 main().catch((e) => {
