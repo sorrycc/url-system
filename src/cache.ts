@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import mkdirp from 'mkdirp';
 
 export class Cache {
