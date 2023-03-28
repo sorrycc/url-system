@@ -7,7 +7,7 @@ const CHATGPT_MODEL = 'gpt-3.5-turbo';
 const PROMPT = `Please summarize this article in chinese.`;
 
 const maxModelTokens = 4096;
-const maxResponseTokens = 500;
+const maxResponseTokens = 300;
 const maxNumTokens = maxModelTokens - maxResponseTokens;
 const tokenizer = encoding_for_model('text-davinci-003');
 function getTokenLength(str: string) {
@@ -15,10 +15,7 @@ function getTokenLength(str: string) {
 }
 
 class ChatGPTAPI {
-  private opts: { apiKey: string; completionParams: any };
-  constructor(opts: { apiKey: string; completionParams: any }) {
-    this.opts = opts;
-  }
+  constructor(private opts: { apiKey: string; completionParams: any }) {}
   sendMessage(message: string) {
     const { apiKey, completionParams } = this.opts;
     const url = `https://api.openai.com/v1/chat/completions`;
