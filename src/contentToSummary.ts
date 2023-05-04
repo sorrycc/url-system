@@ -2,6 +2,7 @@ import { encoding_for_model } from '@dqbd/tiktoken';
 import assert from 'assert';
 import axios from 'axios';
 import { getEnv } from './env';
+import { writeFileSync } from 'fs';
 
 const CHATGPT_MODEL = 'gpt-3.5-turbo';
 const PROMPT = `Please summarize this article in chinese.`;
@@ -14,12 +15,20 @@ function getTokenLength(str: string) {
   return tokenizer.encode(str).length;
 }
 
+function writeTmpMessage(message: string) {
+  const random = Math.random().toString(36).substring(7);
+  const file = `/tmp/chatgpt-message-${random}.txt`;
+  writeFileSync(file, message, 'utf-8');
+  console.log(`Wrote message to ${file}`);
+}
+
 class ChatGPTAPI {
   constructor(private opts: { apiKey: string; completionParams: any }) {}
   sendMessage(message: string) {
     const { apiKey, completionParams } = this.opts;
     const url = `https://api.openai.com/v1/chat/completions`;
     const nextNumTokensEstimate = getTokenLength(message);
+    writeTmpMessage(message);
     const isValidPrompt = nextNumTokensEstimate <= maxNumTokens;
     assert(
       isValidPrompt,

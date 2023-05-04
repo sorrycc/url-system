@@ -2,6 +2,7 @@ import yParser from 'yargs-parser';
 import { urlToContent } from './urlToContent/urlToContent';
 import assert from 'assert';
 import path from 'path';
+import fs from 'fs';
 // @ts-ignore
 import pangu from 'pangu';
 import { Cache } from './cache';
@@ -19,7 +20,16 @@ async function main() {
   assert(url, 'url is not set');
   let result = cache.get(url);
   if (args.force || !result) {
-    const { content, prompt, title } = await urlToContent(url as string);
+    let content;
+    let prompt = '请用中文总结这篇文章。';
+    let title = args.title as string;
+    if (args.content) {
+      content = fs.readFileSync(args.content as string, 'utf-8');
+    } else {
+      const res = await urlToContent(url as string);
+      content = res.content;
+      title = res.title;
+    }
     assert(content, 'content is not set');
     console.log('> got content');
     const summary_raw = await contentToSummary({
@@ -38,13 +48,12 @@ async function main() {
       created_at: new Date().getTime(),
     };
     if (getEnv().OPENAI_API_SERVER) {
-      const {
-        data: { text },
-      } = await axios.post(getEnv().OPENAI_API_SERVER!, {
+      const { data } = await axios.post(getEnv().OPENAI_API_SERVER!, {
         message: `${title}`,
         prompt: 'Please translate the following text into Chinese:',
       });
-      result.translatedTitle = pangu.spacing(text.trim());
+      console.log('>>', title, data);
+      result.translatedTitle = pangu.spacing(data.text.trim());
     }
     if (!args.test) {
       cache.set(url, result);

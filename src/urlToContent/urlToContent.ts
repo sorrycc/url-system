@@ -13,7 +13,7 @@ export async function urlToContent(url: string) {
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
     },
   });
-  const html = res.data;
+  let html = res.data;
   const doc = new JSDOM(html, {
     url,
   });
@@ -42,7 +42,7 @@ export async function urlToContent(url: string) {
   return {
     title: parseResult.title,
     content: parseResult.textContent, //.slice(0, 2300),
-    prompt: `Please summarize this article in chinese.`,
+    prompt: `请用中文总结这篇文章。`,
   };
 }
 
