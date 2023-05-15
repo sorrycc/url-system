@@ -8,13 +8,14 @@ import pangu from 'pangu';
 import { Cache } from './cache';
 import { contentToSummary } from './contentToSummary';
 import { getEnv } from './env';
-import axios from 'axios';
+import { ask } from './bard';
+import { translate } from './translate';
 
 async function main() {
-  const cache = new Cache({
-    filePath: path.join(__dirname, '../data/cache.json'),
-  });
   const args = yParser(process.argv.slice(2), {});
+  const cache = new Cache({
+    filePath: path.join(__dirname, args.personal ? `../data/cache-personal.json` : '../data/cache.json'),
+  });
   console.log('> args', JSON.stringify(args));
   const url = args._[0] as string;
   assert(url, 'url is not set');
@@ -32,28 +33,43 @@ async function main() {
     }
     assert(content, 'content is not set');
     console.log('> got content');
-    const summary_raw = await contentToSummary({
-      content,
-      prompt,
-    });
-    const summary = pangu
-      .spacing(summary_raw.choices[0].message.content)
-      .trim();
-    console.log('> got summary');
-    result = {
-      title,
-      content,
-      summary,
-      summary_raw,
-      created_at: new Date().getTime(),
-    };
-    if (getEnv().OPENAI_API_SERVER) {
-      const { data } = await axios.post(getEnv().OPENAI_API_SERVER!, {
-        message: `${title}`,
-        prompt: 'Please translate the following text into Chinese:',
+    if (args.bard) {
+      const bardRes = await ask({message: `Please summary this article shortly. ${content}`});
+      console.log('> got summary');
+      const translatedSummary = await translate({content: bardRes.content});
+      const summary = pangu.spacing(translatedSummary).trim();
+      result = {
+        title,
+        content,
+        summary,
+        summary_raw: '',
+        created_at: new Date().getTime(),
+      };
+    } else {
+      const summary_raw = await contentToSummary({
+        content,
+        prompt,
       });
-      console.log('>>', title, data);
-      result.translatedTitle = pangu.spacing(data.text.trim());
+      const summary = pangu
+        .spacing(summary_raw.choices[0].message.content)
+        .trim();
+      console.log('> got summary');
+      result = {
+        title,
+        content,
+        summary,
+        summary_raw,
+        created_at: new Date().getTime(),
+      };
+    }
+    if (getEnv().OPENAI_API_SERVER) {
+      // const { data } = await axios.post(getEnv().OPENAI_API_SERVER!, {
+      //   message: `${title}`,
+      //   prompt: 'Please translate the following text into Chinese:',
+      // });
+      // console.log('>>', title, data);
+      // result.translatedTitle = pangu.spacing(data.text.trim());
+      result.translatedTitle = await translate({ content: title });
     }
     if (!args.test) {
       cache.set(url, result);
