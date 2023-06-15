@@ -6,15 +6,17 @@ import fs from 'fs';
 // @ts-ignore
 import pangu from 'pangu';
 import { Cache } from './cache';
-import { contentToSummary } from './contentToSummary';
+import { contentToSummaryWithServer } from './contentToSummary';
 import { getEnv } from './env';
-import { ask } from './bard';
 import { translate } from './translate';
 
 async function main() {
   const args = yParser(process.argv.slice(2), {});
   const cache = new Cache({
-    filePath: path.join(__dirname, args.personal ? `../data/cache-personal.json` : '../data/cache.json'),
+    filePath: path.join(
+      __dirname,
+      args.personal ? `../data/cache-personal.json` : '../data/cache.json',
+    ),
   });
   console.log('> args', JSON.stringify(args));
   const url = args._[0] as string;
@@ -33,35 +35,22 @@ async function main() {
     }
     assert(content, 'content is not set');
     console.log('> got content');
-    if (args.bard) {
-      const bardRes = await ask({message: `Please summary this article shortly. ${content}`});
-      console.log('> got summary');
-      const translatedSummary = await translate({content: bardRes.content});
-      const summary = pangu.spacing(translatedSummary).trim();
-      result = {
-        title,
-        content,
-        summary,
-        summary_raw: '',
-        created_at: new Date().getTime(),
-      };
-    } else {
-      const summary_raw = await contentToSummary({
-        content,
-        prompt,
-      });
-      const summary = pangu
-        .spacing(summary_raw.choices[0].message.content)
-        .trim();
-      console.log('> got summary');
-      result = {
-        title,
-        content,
-        summary,
-        summary_raw,
-        created_at: new Date().getTime(),
-      };
-    }
+    const summary_raw = await contentToSummaryWithServer({
+      content,
+      prompt,
+      sixteen: args.sixteen || false,
+    });
+    const summary = pangu
+      .spacing(summary_raw.choices[0].message.content)
+      .trim();
+    console.log('> got summary');
+    result = {
+      title,
+      content,
+      summary,
+      summary_raw,
+      created_at: new Date().getTime(),
+    };
     if (getEnv().OPENAI_API_SERVER) {
       // const { data } = await axios.post(getEnv().OPENAI_API_SERVER!, {
       //   message: `${title}`,

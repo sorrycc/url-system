@@ -3,6 +3,8 @@ import assert from 'assert';
 import axios from 'axios';
 import { getEnv } from './env';
 import { writeFileSync } from 'fs';
+// @ts-ignore
+import pangu from 'pangu';
 
 const CHATGPT_MODEL = 'gpt-3.5-turbo';
 const PROMPT = `Please summarize this article in chinese.`;
@@ -89,11 +91,25 @@ export async function contentToSummary(opts: {
   return res.data;
 }
 
+export async function contentToSummaryWithServer(opts: {
+  content: string;
+  prompt?: string;
+  sixteen?: boolean;
+}) {
+  const prompt = opts.prompt || PROMPT;
+  const apiServer = `${getEnv().OPENAI_API_SERVER!}${opts.sixteen ? 'chatgpt_vip' : 'chatgpt_4'}`;
+  const { data } = await axios.post(apiServer, {
+    message: opts.content,
+    prompt,
+  });
+  return pangu.spacing(data.text.trim());
+}
+
 // main
 if (require.main === module) {
   (async () => {
     const content = `ChatGPT and Whisper models are now available on our API, giving developers access to cutting-edge language (not just chat!) and speech-to-text capabilities. Through a series of system-wide optimizations, we’ve achieved 90% cost reduction for ChatGPT since December; we’re now passing through those savings to API users. Developers can now use our open-source Whisper large-v2 model in the API with much faster and cost-effective results. ChatGPT API users can expect continuous model improvements and the option to choose dedicated capacity for deeper control over the models. We’ve also listened closely to feedback from our developers and refined our API terms of service to better meet their needs.Early users of ChatGPT and Whisper APIsSnap Inc., the creator of Snapchat, introduced My AI for Snapchat+ this week.`;
-    const summary = await contentToSummary({ content });
+    const summary = await contentToSummaryWithServer({ content });
     console.log(summary);
   })().catch((e) => {
     console.error(e);
