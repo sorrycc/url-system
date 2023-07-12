@@ -24,7 +24,7 @@ async function main() {
   let result = cache.get(url);
   if (args.force || !result) {
     let content;
-    let prompt = '请用中文总结这篇文章。';
+    let prompt = '请用中文总结这篇文章，不要换行。';
     let title = args.title as string;
     if (args.content) {
       content = fs.readFileSync(args.content as string, 'utf-8');
@@ -35,20 +35,21 @@ async function main() {
     }
     assert(content, 'content is not set');
     console.log('> got content');
-    const summary_raw = await contentToSummaryWithServer({
+    console.log('> prompt', prompt);
+    const summary = await contentToSummaryWithServer({
       content,
       prompt,
       sixteen: args.sixteen || false,
     });
-    const summary = pangu
-      .spacing(summary_raw.choices[0].message.content)
-      .trim();
+    // const summary = pangu
+    //   .spacing(summary_raw.choices[0].message.content)
+    //   .trim();
     console.log('> got summary');
     result = {
       title,
       content,
       summary,
-      summary_raw,
+      summary_raw: '',
       created_at: new Date().getTime(),
     };
     if (getEnv().OPENAI_API_SERVER) {
